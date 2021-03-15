@@ -23,15 +23,16 @@ redis:
     #addrs:
     #- "tyk-redis-master.tyk.svc.cluster.local:6379"
     addrs:
-      - "redis.tyk.svc.cluster.local:6379"
+      - "redis-cluster.default.svc.cluster.local:6379"
     useSSL: false
+    enableCluster: true
     #If you're using Bitnami Redis chart please input your password in the field below
-    #pass: ""
+    pass: "7nUsT50U3K"
 
 mongo:
-    mongoURL: "mongodb://mongo.tyk.svc.cluster.local:27017/tyk_analytics"
+    #mongoURL: "mongodb://mongo.tyk.svc.cluster.local:27017/tyk_analytics"
     #If you're using Bitnami MongoDB chart please input your password below
-    #mongoURL: "mongodb://root:pass@tyk-mongo-mongodb.tyk.svc.cluster.local:27017/tyk-dashboard?authSource=admin"
+    mongoURL: "mongodb://root:jfGKn0mvj0@tyk-mongo-mongodb.default.svc.cluster.local:27017/tyk-dashboard?authSource=admin"
     useSSL: false
 
 mdcb:
@@ -110,9 +111,9 @@ tib:
     profiles: tyk-tib-profiles-conf
 
 dash:
-  replicaCount: 1
+  replicaCount: 3
   hostName: "localhost"
-  license: ""
+  license: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhbGxvd2VkX25vZGVzIjoiZTA3ZWM2ZjItNWY0MS00ZjZjLTdhMjMtODQ2N2VjZDIwNTc3LGVkOTI1YTc2LThmMDctNDMzZi00NGFiLTczODhkNGRhMzllMSw1MGE5OThiZC0xZjY2LTQzYjAtNzgwNy0wNDE2YTg0ODMyMzUsZjhiZDhjYTMtOGU0OS00ZGM2LTc4N2UtNDczYWM3NTQxOGJkLDM1YzRkYjVjLWJjMGEtNDdmMS02ZjMyLTIxMmZhZjI3ZDc1YSw2MzQxMWM0MS01MjEzLTQ4MDEtN2NmNy00YzhlNzZmMjI2YzksY2FjMjhkYjYtMWVkMC00MTUyLTZlNTQtYTBiMzZhYmY3ZmRkLDRjYjhmYzIxLWNkNzgtNDRmNy01ZjkyLTRmOTcxNDNmZDJiNixlZDc1NjI4MS1lNWY3LTQ4YWUtNDdiNi1hNDBjMGUxYjVlMGQsYmFjYzM5Y2MtN2U1OS00MzBmLTVmZGMtOGRkNzVjMzUxNDAyIiwiZXhwIjoxNjE4NDM0Mzc4LCJpYXQiOjE2MTU4NDIzNzgsIm93bmVyIjoiNTc3OTcxMTk0NWY5MmU2Njg5MDAwMTI3Iiwic2NvcGUiOiJtdWx0aV90ZWFtLHJiYWMsZ3JhcGgiLCJ2IjoiMiJ9.dKj0Kr0ugwPS5iISQLxOIJZ32Hm4LF0SX-JT7aw2BTLKDp1ib8Nnj9JcyN3erSnP3HAaW85nQPECQlX3z_AygOyKTPUqVUM6PrlJlqPMVRvW3AAupTOAII1fKTCUDCOpTKeyJosA5p4jqAGnpqiqXLDtIruvWUW9bbDNhJtdDS-gVQwDqA_9CxKSfPkPVe921cj6JtslGH8f2syeok6Mva-1Bj_nI2clOglBMbMdwTh-8QSNFVWCr8H1qvEA2uDes_vRO-oPQ4eRxHNcPtxNBb5MznspmI5T7N5CZXOPtLpBXufEfIfk1qpNlj7sNsVs62XcaOvKnXkjO2T5ufKrsg"
   containerPort: 3000
   image:
     repository: tykio/tyk-dashboard
@@ -165,8 +166,8 @@ portal:
 
 gateway:
   kind: DaemonSet
-  replicaCount: 2
-  hostName: "gateway.tykbeta.com"
+  replicaCount: 3
+  hostName: "localhost"
   tags: "ingress"
   tls: true
   containerPort: 8080
