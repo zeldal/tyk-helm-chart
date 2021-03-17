@@ -1,0 +1,98 @@
+# Default values for tyk-pro chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Only set this to false if you are not planning on using the sidecar injector
+enableSharding: true
+
+# Set to true to use Tyk as the Ingress gateway to an Istio Service Mesh
+# We apply some exceptions to the Istio IPTables so inbound calls to the
+# Gateway and Dashboard are exposed to the outside world - see the deployment templates for implementation
+enableIstioIngress: false
+
+secrets:
+  APISecret: "CHANGEME"
+  AdminSecret: "12345"
+
+redis:
+    shardCount: 128
+    #If you're using Bitnami Redis chart please input the correct host to your instalaltion in the field below
+    #addrs:
+    #- "tyk-redis-master.tyk.svc.cluster.local:6379"
+    addrs:
+      - "tyk-redis-master.default.svc.cluster.local:6379"
+    useSSL: false
+    #If you're using Bitnami Redis chart please input your password in the field below
+    pass: "xt3Xxwtqkc"
+
+mongo:
+    #mongoURL: "mongodb://mongo.tyk.svc.cluster.local:27017/tyk_analytics"
+    #If you're using Bitnami MongoDB chart please input your password below
+    mongoURL: "mongodb://root:jfGKn0mvj0@tyk-mongo-mongodb.default.svc.cluster.local:27017/tyk-dashboard?authSource=admin"
+    useSSL: false
+
+dash:
+  enabled: false
+  namespace: "int"
+  containerPort: 3000
+  service:
+    port: 3000
+
+pump:
+  enabled: false
+
+tib:
+  enabled: false
+
+mdcb:
+  enabled: false
+
+gateway:
+  enabled: true
+  kind: DaemonSet
+  replicaCount: 3
+  hostName: "localhost"
+  tags: "dmz"
+  tls: true
+  containerPort: 8080
+  image:
+    repository: tykio/tyk-gateway
+    tag: v3.1.2
+    pullPolicy: Always
+  service:
+    type: NodePort
+    port: 8080
+    externalTrafficPolicy: Local
+    annotations: {}
+  ingress:
+    enabled: false
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    path: /
+    hosts:
+      - tyk-gw.local
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #  cpu: 100m
+    #  memory: 128Mi
+    # requests:
+    #  cpu: 100m
+    #  memory: 128Mi
+  nodeSelector: {}
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      effect: NoSchedule
+  affinity: {}
+  extraEnvs: []

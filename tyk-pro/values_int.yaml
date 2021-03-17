@@ -1,0 +1,170 @@
+# Default values for tyk-pro chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Only set this to false if you are not planning on using the sidecar injector
+enableSharding: false
+
+# Set to true to use Tyk as the Ingress gateway to an Istio Service Mesh
+# We apply some exceptions to the Istio IPTables so inbound calls to the
+# Gateway and Dashboard are exposed to the outside world - see the deployment templates for implementation
+enableIstioIngress: false
+
+secrets:
+  APISecret: "CHANGEME"
+  AdminSecret: "12345"
+
+tib:
+  enabled: false
+
+mdcb:
+  enabled: false
+
+redis:
+    shardCount: 128
+    #If you're using Bitnami Redis chart please input the correct host to your instalaltion in the field below
+    #addrs:
+    #- "tyk-redis-master.tyk.svc.cluster.local:6379"
+    addrs:
+      - "tyk-redis-master.default.svc.cluster.local:6379"
+    useSSL: false
+    #If you're using Bitnami Redis chart please input your password in the field below
+    pass: "xt3Xxwtqkc"
+
+mongo:
+    #mongoURL: "mongodb://mongo.tyk.svc.cluster.local:27017/tyk_analytics"
+    #If you're using Bitnami MongoDB chart please input your password below
+    mongoURL: "mongodb://root:jfGKn0mvj0@tyk-mongo-mongodb.default.svc.cluster.local:27017/tyk-dashboard?authSource=admin"
+    useSSL: false
+
+dash:
+  enabled: true
+  replicaCount: 3
+  hostName: "localhost"
+  license: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhbGxvd2VkX25vZGVzIjoiZTA3ZWM2ZjItNWY0MS00ZjZjLTdhMjMtODQ2N2VjZDIwNTc3LGVkOTI1YTc2LThmMDctNDMzZi00NGFiLTczODhkNGRhMzllMSw1MGE5OThiZC0xZjY2LTQzYjAtNzgwNy0wNDE2YTg0ODMyMzUsZjhiZDhjYTMtOGU0OS00ZGM2LTc4N2UtNDczYWM3NTQxOGJkLDM1YzRkYjVjLWJjMGEtNDdmMS02ZjMyLTIxMmZhZjI3ZDc1YSw2MzQxMWM0MS01MjEzLTQ4MDEtN2NmNy00YzhlNzZmMjI2YzksY2FjMjhkYjYtMWVkMC00MTUyLTZlNTQtYTBiMzZhYmY3ZmRkLDRjYjhmYzIxLWNkNzgtNDRmNy01ZjkyLTRmOTcxNDNmZDJiNixlZDc1NjI4MS1lNWY3LTQ4YWUtNDdiNi1hNDBjMGUxYjVlMGQsYmFjYzM5Y2MtN2U1OS00MzBmLTVmZGMtOGRkNzVjMzUxNDAyIiwiZXhwIjoxNjE4NDM0Mzc4LCJpYXQiOjE2MTU4NDIzNzgsIm93bmVyIjoiNTc3OTcxMTk0NWY5MmU2Njg5MDAwMTI3Iiwic2NvcGUiOiJtdWx0aV90ZWFtLHJiYWMsZ3JhcGgiLCJ2IjoiMiJ9.dKj0Kr0ugwPS5iISQLxOIJZ32Hm4LF0SX-JT7aw2BTLKDp1ib8Nnj9JcyN3erSnP3HAaW85nQPECQlX3z_AygOyKTPUqVUM6PrlJlqPMVRvW3AAupTOAII1fKTCUDCOpTKeyJosA5p4jqAGnpqiqXLDtIruvWUW9bbDNhJtdDS-gVQwDqA_9CxKSfPkPVe921cj6JtslGH8f2syeok6Mva-1Bj_nI2clOglBMbMdwTh-8QSNFVWCr8H1qvEA2uDes_vRO-oPQ4eRxHNcPtxNBb5MznspmI5T7N5CZXOPtLpBXufEfIfk1qpNlj7sNsVs62XcaOvKnXkjO2T5ufKrsg"
+  containerPort: 3000
+  image:
+    repository: tykio/tyk-dashboard
+    tag: v3.1.2
+    pullPolicy: Always
+  service:
+    type: NodePort
+    port: 3000
+  ingress:
+    enabled: true
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    path: /
+    hosts:
+      - tyk-dashboard.local
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #  cpu: 100m
+    #  memory: 128Mi
+    # requests:
+    #  cpu: 100m
+    #  memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  extraEnvs: []
+
+portal:
+  enabled: true
+  ingress:
+    enabled: true
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    path: /
+    hosts:
+      - tyk-portal.local
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+gateway:
+  enabled: true
+  kind: DaemonSet
+  replicaCount: 3
+  hostName: "localhost"
+  tags: "int"
+  tls: true
+  containerPort: 8080
+  image:
+    repository: tykio/tyk-gateway
+    tag: v3.1.2
+    pullPolicy: Always
+  service:
+    type: NodePort
+    port: 8080
+    externalTrafficPolicy: Local
+    annotations: {}
+  ingress:
+    enabled: true
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    path: /
+    hosts:
+      - tyk-gw.local
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #  cpu: 100m
+    #  memory: 128Mi
+    # requests:
+    #  cpu: 100m
+    #  memory: 128Mi
+  nodeSelector: {}
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      effect: NoSchedule
+  affinity: {}
+  extraEnvs: []
+
+pump:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: tykio/tyk-pump-docker-pub
+    tag: v1.2.0
+    pullPolicy: Always
+  annotations: {}
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #  cpu: 100m
+    #  memory: 128Mi
+    # requests:
+    #  cpu: 100m
+    #  memory: 128Mi
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  extraEnvs: []
+
+rbac: true
