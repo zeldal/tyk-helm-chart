@@ -1,3 +1,4 @@
+{{- if .Values.dash.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -138,3 +139,4 @@ spec:
             items:
               - key: tyk_analytics.conf
                 path: tyk_analytics.conf
+{{- end }}

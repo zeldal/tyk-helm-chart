@@ -1,4 +1,5 @@
-{{- if and .Values.tib.enabled .Values.tib.ingress.enabled -}}
+{{- if .Values.tib.enabled -}}
+{{- if .Values.tib.ingress.enabled -}}
 {{- $fullName := include "tyk-pro.fullname" . -}}
 {{- $ingressPath := .Values.tib.ingress.path -}}
 apiVersion: networking.k8s.io/v1beta1
@@ -35,4 +36,5 @@ spec:
               serviceName: tib-svc-{{ $fullName }}
               servicePort: http
   {{- end }}
+{{- end }}
 {{- end }}
